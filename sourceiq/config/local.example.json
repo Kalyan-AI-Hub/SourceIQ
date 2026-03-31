@@ -1,0 +1,11 @@
+{
+  "procurement": {
+    "email": "your-email@example.com",
+    "teamName": "Procurement Team",
+    "ccEmails": []
+  },
+  "app": {
+    "name": "SourceIQ",
+    "baseUrl": "http://localhost:3000"
+  }
+}

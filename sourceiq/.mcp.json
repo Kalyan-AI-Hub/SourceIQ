@@ -1,0 +1,36 @@
+{
+  "mcpServers": {
+    "tariff": {
+      "command": "ts-node",
+      "args": ["src/mcp/tariffMcpServer.ts"]
+    },
+    "inventory": {
+      "command": "ts-node",
+      "args": ["src/mcp/inventoryMcpServer.ts"]
+    },
+    "risk": {
+      "command": "ts-node",
+      "args": ["src/mcp/riskMcpServer.ts"]
+    },
+    "commodity": {
+      "command": "ts-node",
+      "args": ["src/mcp/commodityMcpServer.ts"],
+      "description": "Live commodity prices — WTI/Brent oil, Baltic Dry Index, cotton, copper (Stooq, no API key)"
+    },
+    "sanctions": {
+      "command": "ts-node",
+      "args": ["src/mcp/sanctionsMcpServer.ts"],
+      "description": "US OFAC sanctions screening — country-level and SDN entity lookup"
+    },
+    "fx": {
+      "command": "ts-node",
+      "args": ["src/mcp/fxMcpServer.ts"],
+      "description": "Live USD FX rates for all sourcing country currencies (ECB via frankfurter.app)"
+    },
+    "gdelt": {
+      "command": "ts-node",
+      "args": ["src/mcp/gdeltMcpServer.ts"],
+      "description": "Live GDELT news search — conflict, trade, geopolitical news from 100+ global sources"
+    }
+  }
+}

@@ -1,0 +1,66 @@
+sku,name,category,quantity,currentSourceCountry,unitCostUSD,hsCode,annualVolume
+SKU-001,USB-C Charging Hub 65W 7-Port,Electronics,8500,China,18.50,8471.30,25000
+SKU-002,Wireless Bluetooth Earbuds Pro,Electronics,12000,China,22.00,8517.12,40000
+SKU-003,14-inch Laptop Cooling Pad,Electronics,5000,Vietnam,17.20,8471.30,15000
+SKU-004,Smart LED Desk Lamp 12W,Electronics,9000,China,12.00,8471.30,30000
+SKU-005,Portable 10000mAh Power Bank,Electronics,15000,Vietnam,15.80,8517.12,50000
+SKU-006,Mechanical Keyboard Compact TKL,Electronics,4000,China,35.00,8471.30,10000
+SKU-007,Men's Classic Crew-Neck T-Shirt,Apparel,25000,Bangladesh,4.20,6109.10,80000
+SKU-008,Women's Stretch Yoga Leggings,Apparel,18000,Cambodia,7.10,6109.10,60000
+SKU-009,Men's Slim Chino Trousers,Apparel,12000,Bangladesh,9.50,6203.42,40000
+SKU-010,Unisex Fleece Zip Hoodie,Apparel,14000,Cambodia,11.60,6109.10,45000
+SKU-011,Kids' Cotton Polo Shirt 3-Pack,Apparel,20000,Bangladesh,7.80,6109.10,70000
+SKU-012,Women's Linen Wide-Leg Pants,Apparel,9000,Cambodia,13.90,6203.42,30000
+SKU-013,Queen Memory Foam Mattress 10in,Home,2000,India,58.00,9404.29,5000
+SKU-014,6-Piece Stainless Steel Cookware Set,Home,4500,Indonesia,43.50,7323.93,12000
+SKU-015,Bamboo Cutting Board Set of 3,Home,8000,India,11.50,7323.93,25000
+SKU-016,800-Thread-Count Cotton Sheet Set,Home,6000,India,28.00,9404.29,18000
+SKU-017,Ceramic Non-Stick Frying Pan 28cm,Home,7000,Indonesia,17.20,7323.93,22000
+SKU-018,Blackout Curtains 52x84in Pair,Home,5500,India,19.80,9404.29,16000
+SKU-019,STEM Building Blocks 500-Piece,Toys,11000,China,14.00,9503.00,35000
+SKU-020,Remote-Control Monster Truck,Toys,8000,China,22.50,9503.00,25000
+SKU-021,Wooden Balance Board Kids,Toys,5000,Mexico,21.50,9503.00,15000
+SKU-022,Magnetic Tile Construction Set 100pc,Toys,9000,China,28.00,9503.00,28000
+SKU-023,Plush Animal Backpack Kids,Toys,13000,Mexico,10.20,9503.00,40000
+SKU-024,Board Game Strategy Family Edition,Toys,7000,China,16.00,9503.00,20000
+SKU-025,Organic Cold-Pressed Olive Oil 1L,Food,6000,Turkey,7.50,2106.90,18000
+SKU-026,Premium Ground Coffee 500g Bag,Food,9000,Brazil,6.50,2106.90,28000
+SKU-027,Protein Granola Bar Box 24-count,Food,12000,Mexico,5.80,2106.90,38000
+SKU-028,Raw Wildflower Honey 500g Jar,Food,5000,Turkey,9.80,2106.90,14000
+SKU-029,Freeze-Dried Mango Snack 200g,Food,8000,Mexico,4.20,2106.90,24000
+SKU-030,Hazelnut Spread 400g Jar,Food,10000,Turkey,5.90,2106.90,32000
+SKU-031,4K Smart TV 55-inch QLED,Electronics,3000,China,280.00,8471.30,20000
+SKU-032,Gaming Desktop PC i7-13700 16GB,Electronics,1500,China,450.00,8471.30,8000
+SKU-033,True Wireless Earbuds ANC Pro,Electronics,8000,China,38.00,8517.12,45000
+SKU-034,Men's Slim-Fit Cotton Dress Shirt,Apparel,15000,Egypt,5.90,6109.10,48000
+SKU-035,Women's Modest Wrap Maxi Dress,Apparel,10000,Jordan,8.60,6203.42,32000
+SKU-036,Kids' Cotton Pyjama Set 2-Piece,Apparel,18000,Egypt,4.50,6109.10,58000
+SKU-037,Luxury Egyptian Cotton Towel Set 6pc,Home,6000,Egypt,16.80,9404.29,18000
+SKU-038,Hammered Copper Serving Tray 40cm,Home,4000,Egypt,13.20,7323.93,12000
+SKU-039,Handcrafted Ceramic Tagine Pot 30cm,Home,3500,Morocco,23.50,7323.93,10000
+SKU-040,Premium Medjool Dates 1kg Gift Box,Food,8000,Jordan,10.80,2106.90,25000
+SKU-041,Virgin Argan Cooking Oil 500ml,Food,6000,Morocco,7.60,2106.90,20000
+SKU-042,Raw Desert Sidr Honey 500g Jar,Food,5000,Saudi Arabia,13.20,2106.90,15000
+SKU-043,Za'atar and Sumac Spice Collection,Food,9000,Jordan,7.10,2106.90,28000
+SKU-044,Brass Mabkhara Incense Burner Set,Home,3000,Oman,21.50,7323.93,8000
+SKU-045,Premium Black Seed Oil 250ml Bottle,Food,7000,Saudi Arabia,10.40,2106.90,22000
+SKU-046,Smart 65W GaN USB-C Charger 4-Port,Electronics,12000,UAE,16.80,8517.12,38000
+SKU-047,Aluminum Food Storage Container Set 5pc,Home,7000,UAE,11.80,7323.93,22000
+SKU-048,Premium Frankincense Resin 50g Gift Box,Food,6000,Oman,7.20,2106.90,18000
+SKU-049,Omani Rose Water Distilled 250ml,Food,5500,Oman,5.60,2106.90,16000
+SKU-050,Handcrafted Omani Silver Khanjar Wall Decor,Home,2500,Oman,28.80,7323.93,6000
+SKU-051,Qatar Aluminum Alloy Serving Platter 42cm,Home,4500,Qatar,14.20,7323.93,14000
+SKU-052,Premium Camel Milk Powder 250g Bag,Food,4000,UAE,14.50,2106.90,12000
+SKU-053,Men's Premium Linen Kandura Thobe,Apparel,8000,UAE,19.80,6109.10,24000
+SKU-054,Persian Saffron Pure Grade A 1g Sachets 10-Pack,Food,5000,Iran,3.20,2106.90,15000
+SKU-055,Roasted Iranian Pistachio Kernels 500g,Food,7000,Iran,4.60,2106.90,20000
+SKU-056,Hand-Knotted Persian Wool Area Rug 4x6ft,Home,1500,Iran,92.00,9404.29,4000
+SKU-057,Iranian Barberry Dried 200g Pack,Food,6000,Iran,2.80,2106.90,18000
+SKU-058,Qatar Petrochemical HDPE Storage Bin 40L,Home,5500,Qatar,10.80,7323.93,16000
+SKU-059,Premium Medjool Dates UAE 1kg Luxury Box,Food,9000,UAE,11.80,2106.90,28000
+SKU-060,Oud Perfume Oil Blend 12ml Bottle,Food,3500,UAE,21.50,2106.90,10000
+SKU-061,Luxury 100% Cotton Prayer Mat 70x120cm,Home,6000,Qatar,16.20,9404.29,18000
+SKU-062,UAE Gold-Plated Stainless Steel Thermos 500ml,Home,8000,UAE,9.40,7323.93,25000
+SKU-063,Qatari Camel Leather Wallet,Apparel,4000,Qatar,17.80,6203.42,12000
+SKU-064,Iranian Saffron Tea Blend 100g Tin,Food,5500,Iran,3.60,2106.90,16000
+SKU-065,Omani Halwa Traditional Sweet 400g,Food,4500,Oman,6.20,2106.90,14000

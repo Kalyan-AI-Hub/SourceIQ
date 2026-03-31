@@ -1,0 +1,91 @@
+[
+  { "country": "China",      "category": "Electronics", "leadTimeDays": 28, "reliabilityScore": 85, "carbonScore": 42, "minimumOrderQuantity": 500 },
+  { "country": "China",      "category": "Apparel",     "leadTimeDays": 25, "reliabilityScore": 82, "carbonScore": 40, "minimumOrderQuantity": 1000 },
+  { "country": "China",      "category": "Home",        "leadTimeDays": 30, "reliabilityScore": 83, "carbonScore": 41, "minimumOrderQuantity": 300 },
+  { "country": "China",      "category": "Toys",        "leadTimeDays": 28, "reliabilityScore": 80, "carbonScore": 38, "minimumOrderQuantity": 500 },
+  { "country": "China",      "category": "Food",        "leadTimeDays": 35, "reliabilityScore": 75, "carbonScore": 35, "minimumOrderQuantity": 200 },
+
+  { "country": "Vietnam",    "category": "Electronics", "leadTimeDays": 32, "reliabilityScore": 80, "carbonScore": 55, "minimumOrderQuantity": 300 },
+  { "country": "Vietnam",    "category": "Apparel",     "leadTimeDays": 30, "reliabilityScore": 78, "carbonScore": 53, "minimumOrderQuantity": 500 },
+  { "country": "Vietnam",    "category": "Home",        "leadTimeDays": 35, "reliabilityScore": 76, "carbonScore": 52, "minimumOrderQuantity": 200 },
+  { "country": "Vietnam",    "category": "Toys",        "leadTimeDays": 32, "reliabilityScore": 75, "carbonScore": 54, "minimumOrderQuantity": 300 },
+  { "country": "Vietnam",    "category": "Food",        "leadTimeDays": 38, "reliabilityScore": 72, "carbonScore": 58, "minimumOrderQuantity": 150 },
+
+  { "country": "India",      "category": "Electronics", "leadTimeDays": 35, "reliabilityScore": 75, "carbonScore": 60, "minimumOrderQuantity": 200 },
+  { "country": "India",      "category": "Apparel",     "leadTimeDays": 32, "reliabilityScore": 78, "carbonScore": 62, "minimumOrderQuantity": 500 },
+  { "country": "India",      "category": "Home",        "leadTimeDays": 30, "reliabilityScore": 80, "carbonScore": 65, "minimumOrderQuantity": 200 },
+  { "country": "India",      "category": "Toys",        "leadTimeDays": 35, "reliabilityScore": 73, "carbonScore": 60, "minimumOrderQuantity": 300 },
+  { "country": "India",      "category": "Food",        "leadTimeDays": 28, "reliabilityScore": 82, "carbonScore": 68, "minimumOrderQuantity": 100 },
+
+  { "country": "Mexico",     "category": "Electronics", "leadTimeDays": 12, "reliabilityScore": 88, "carbonScore": 70, "minimumOrderQuantity": 200 },
+  { "country": "Mexico",     "category": "Apparel",     "leadTimeDays": 10, "reliabilityScore": 85, "carbonScore": 72, "minimumOrderQuantity": 300 },
+  { "country": "Mexico",     "category": "Home",        "leadTimeDays": 12, "reliabilityScore": 84, "carbonScore": 71, "minimumOrderQuantity": 150 },
+  { "country": "Mexico",     "category": "Toys",        "leadTimeDays": 12, "reliabilityScore": 86, "carbonScore": 73, "minimumOrderQuantity": 200 },
+  { "country": "Mexico",     "category": "Food",        "leadTimeDays": 8,  "reliabilityScore": 90, "carbonScore": 78, "minimumOrderQuantity": 100 },
+
+  { "country": "Bangladesh", "category": "Electronics", "leadTimeDays": 40, "reliabilityScore": 70, "carbonScore": 48, "minimumOrderQuantity": 300 },
+  { "country": "Bangladesh", "category": "Apparel",     "leadTimeDays": 35, "reliabilityScore": 76, "carbonScore": 50, "minimumOrderQuantity": 1000 },
+  { "country": "Bangladesh", "category": "Home",        "leadTimeDays": 38, "reliabilityScore": 70, "carbonScore": 47, "minimumOrderQuantity": 200 },
+  { "country": "Bangladesh", "category": "Toys",        "leadTimeDays": 40, "reliabilityScore": 68, "carbonScore": 45, "minimumOrderQuantity": 300 },
+  { "country": "Bangladesh", "category": "Food",        "leadTimeDays": 42, "reliabilityScore": 65, "carbonScore": 44, "minimumOrderQuantity": 150 },
+
+  { "country": "Cambodia",   "category": "Electronics", "leadTimeDays": 38, "reliabilityScore": 72, "carbonScore": 52, "minimumOrderQuantity": 200 },
+  { "country": "Cambodia",   "category": "Apparel",     "leadTimeDays": 32, "reliabilityScore": 75, "carbonScore": 55, "minimumOrderQuantity": 500 },
+  { "country": "Cambodia",   "category": "Home",        "leadTimeDays": 36, "reliabilityScore": 70, "carbonScore": 53, "minimumOrderQuantity": 150 },
+  { "country": "Cambodia",   "category": "Toys",        "leadTimeDays": 38, "reliabilityScore": 68, "carbonScore": 50, "minimumOrderQuantity": 200 },
+  { "country": "Cambodia",   "category": "Food",        "leadTimeDays": 40, "reliabilityScore": 66, "carbonScore": 52, "minimumOrderQuantity": 100 },
+
+  { "country": "Indonesia",  "category": "Electronics", "leadTimeDays": 30, "reliabilityScore": 78, "carbonScore": 57, "minimumOrderQuantity": 200 },
+  { "country": "Indonesia",  "category": "Apparel",     "leadTimeDays": 28, "reliabilityScore": 76, "carbonScore": 59, "minimumOrderQuantity": 400 },
+  { "country": "Indonesia",  "category": "Home",        "leadTimeDays": 28, "reliabilityScore": 80, "carbonScore": 62, "minimumOrderQuantity": 150 },
+  { "country": "Indonesia",  "category": "Toys",        "leadTimeDays": 30, "reliabilityScore": 74, "carbonScore": 56, "minimumOrderQuantity": 200 },
+  { "country": "Indonesia",  "category": "Food",        "leadTimeDays": 25, "reliabilityScore": 82, "carbonScore": 65, "minimumOrderQuantity": 100 },
+
+  { "country": "Turkey",     "category": "Electronics", "leadTimeDays": 20, "reliabilityScore": 82, "carbonScore": 63, "minimumOrderQuantity": 150 },
+  { "country": "Turkey",     "category": "Apparel",     "leadTimeDays": 18, "reliabilityScore": 85, "carbonScore": 65, "minimumOrderQuantity": 300 },
+  { "country": "Turkey",     "category": "Home",        "leadTimeDays": 18, "reliabilityScore": 84, "carbonScore": 67, "minimumOrderQuantity": 100 },
+  { "country": "Turkey",     "category": "Toys",        "leadTimeDays": 20, "reliabilityScore": 80, "carbonScore": 62, "minimumOrderQuantity": 150 },
+  { "country": "Turkey",     "category": "Food",        "leadTimeDays": 15, "reliabilityScore": 88, "carbonScore": 70, "minimumOrderQuantity": 80 },
+
+  { "country": "Morocco",    "category": "Electronics", "leadTimeDays": 18, "reliabilityScore": 78, "carbonScore": 65, "minimumOrderQuantity": 100 },
+  { "country": "Morocco",    "category": "Apparel",     "leadTimeDays": 15, "reliabilityScore": 82, "carbonScore": 68, "minimumOrderQuantity": 250 },
+  { "country": "Morocco",    "category": "Home",        "leadTimeDays": 16, "reliabilityScore": 80, "carbonScore": 70, "minimumOrderQuantity": 100 },
+  { "country": "Morocco",    "category": "Toys",        "leadTimeDays": 18, "reliabilityScore": 76, "carbonScore": 64, "minimumOrderQuantity": 150 },
+  { "country": "Morocco",    "category": "Food",        "leadTimeDays": 14, "reliabilityScore": 84, "carbonScore": 72, "minimumOrderQuantity": 80 },
+
+  { "country": "Brazil",     "category": "Electronics", "leadTimeDays": 25, "reliabilityScore": 76, "carbonScore": 60, "minimumOrderQuantity": 150 },
+  { "country": "Brazil",     "category": "Apparel",     "leadTimeDays": 22, "reliabilityScore": 78, "carbonScore": 63, "minimumOrderQuantity": 300 },
+  { "country": "Brazil",     "category": "Home",        "leadTimeDays": 22, "reliabilityScore": 76, "carbonScore": 65, "minimumOrderQuantity": 100 },
+  { "country": "Brazil",     "category": "Toys",        "leadTimeDays": 25, "reliabilityScore": 74, "carbonScore": 60, "minimumOrderQuantity": 150 },
+  { "country": "Brazil",     "category": "Food",        "leadTimeDays": 20, "reliabilityScore": 84, "carbonScore": 68, "minimumOrderQuantity": 80 },
+
+  { "country": "Jordan",     "category": "Electronics", "leadTimeDays": 22, "reliabilityScore": 80, "carbonScore": 68, "minimumOrderQuantity": 100 },
+  { "country": "Jordan",     "category": "Apparel",     "leadTimeDays": 18, "reliabilityScore": 84, "carbonScore": 70, "minimumOrderQuantity": 250 },
+  { "country": "Jordan",     "category": "Home",        "leadTimeDays": 20, "reliabilityScore": 82, "carbonScore": 72, "minimumOrderQuantity": 100 },
+  { "country": "Jordan",     "category": "Toys",        "leadTimeDays": 22, "reliabilityScore": 78, "carbonScore": 67, "minimumOrderQuantity": 150 },
+  { "country": "Jordan",     "category": "Food",        "leadTimeDays": 16, "reliabilityScore": 86, "carbonScore": 74, "minimumOrderQuantity": 80 },
+
+  { "country": "Oman",       "category": "Electronics", "leadTimeDays": 24, "reliabilityScore": 78, "carbonScore": 66, "minimumOrderQuantity": 100 },
+  { "country": "Oman",       "category": "Apparel",     "leadTimeDays": 20, "reliabilityScore": 80, "carbonScore": 68, "minimumOrderQuantity": 200 },
+  { "country": "Oman",       "category": "Home",        "leadTimeDays": 22, "reliabilityScore": 82, "carbonScore": 70, "minimumOrderQuantity": 100 },
+  { "country": "Oman",       "category": "Toys",        "leadTimeDays": 24, "reliabilityScore": 76, "carbonScore": 65, "minimumOrderQuantity": 150 },
+  { "country": "Oman",       "category": "Food",        "leadTimeDays": 18, "reliabilityScore": 84, "carbonScore": 72, "minimumOrderQuantity": 80 },
+
+  { "country": "Egypt",      "category": "Electronics", "leadTimeDays": 28, "reliabilityScore": 74, "carbonScore": 62, "minimumOrderQuantity": 150 },
+  { "country": "Egypt",      "category": "Apparel",     "leadTimeDays": 22, "reliabilityScore": 80, "carbonScore": 65, "minimumOrderQuantity": 400 },
+  { "country": "Egypt",      "category": "Home",        "leadTimeDays": 24, "reliabilityScore": 78, "carbonScore": 67, "minimumOrderQuantity": 150 },
+  { "country": "Egypt",      "category": "Toys",        "leadTimeDays": 28, "reliabilityScore": 72, "carbonScore": 60, "minimumOrderQuantity": 200 },
+  { "country": "Egypt",      "category": "Food",        "leadTimeDays": 20, "reliabilityScore": 82, "carbonScore": 69, "minimumOrderQuantity": 100 },
+
+  { "country": "Saudi Arabia","category": "Electronics", "leadTimeDays": 20, "reliabilityScore": 82, "carbonScore": 64, "minimumOrderQuantity": 100 },
+  { "country": "Saudi Arabia","category": "Apparel",     "leadTimeDays": 18, "reliabilityScore": 80, "carbonScore": 66, "minimumOrderQuantity": 200 },
+  { "country": "Saudi Arabia","category": "Home",        "leadTimeDays": 18, "reliabilityScore": 84, "carbonScore": 68, "minimumOrderQuantity": 100 },
+  { "country": "Saudi Arabia","category": "Toys",        "leadTimeDays": 20, "reliabilityScore": 78, "carbonScore": 63, "minimumOrderQuantity": 150 },
+  { "country": "Saudi Arabia","category": "Food",        "leadTimeDays": 14, "reliabilityScore": 88, "carbonScore": 72, "minimumOrderQuantity": 80 },
+
+  { "country": "UAE",        "category": "Electronics", "leadTimeDays": 16, "reliabilityScore": 88, "carbonScore": 66, "minimumOrderQuantity": 100 },
+  { "country": "UAE",        "category": "Apparel",     "leadTimeDays": 14, "reliabilityScore": 84, "carbonScore": 68, "minimumOrderQuantity": 200 },
+  { "country": "UAE",        "category": "Home",        "leadTimeDays": 15, "reliabilityScore": 86, "carbonScore": 70, "minimumOrderQuantity": 100 },
+  { "country": "UAE",        "category": "Toys",        "leadTimeDays": 16, "reliabilityScore": 82, "carbonScore": 65, "minimumOrderQuantity": 150 },
+  { "country": "UAE",        "category": "Food",        "leadTimeDays": 12, "reliabilityScore": 86, "carbonScore": 72, "minimumOrderQuantity": 80 }
+]

@@ -9,7 +9,7 @@
 
 Global tariff policy shifts and geopolitical disruptions now move at news-cycle speed. A retailer sourcing consumer electronics from China has to evaluate — within 48 hours of a tariff announcement — which of their 30+ SKUs are exposed, what switching to Vietnam or Mexico would cost, and whether those alternatives are themselves stable. Today, that analysis lives in spreadsheets, disconnected tariff tables, and gut instinct.
 
-SourceIQ replaces that process with a single natural-language interface backed by a live multi-agent intelligence system. A buyer types *"What is my China sourcing exposure and best savings opportunities?"* and gets: affected SKUs, current vs alternative landed costs, real-time geopolitical risk scores for each country, and a ranked list of recommended sourcing switches — all grounded in live data and computed on-device, with no pricing or inventory data leaving the machine.
+SourceIQ replaces that process with a decision-support system backed by a live multi-agent intelligence platform. A buyer can assess China sourcing exposure, compare landed-cost tradeoffs across countries, and identify the most actionable sourcing switches from one workflow that brings together affected SKUs, current vs alternative landed costs, real-time geopolitical risk scores, and ranked recommendations — all grounded in live data and computed on-device, with no pricing or inventory data leaving the machine.
 
 **What makes this technically distinct:**
 - A LangGraph StateGraph orchestrates 7 specialist agents with keyword-first classification (saves 300–2000ms per query by avoiding LLM calls for clear-cut intents)
@@ -43,7 +43,7 @@ SourceIQ replaces that process with a single natural-language interface backed b
 
 ## 1. System Overview
 
-SourceIQ is a **multi-agent supply chain intelligence system** built with Next.js 14 (App Router). It answers natural language sourcing questions by routing queries through a LangGraph StateGraph to specialist AI agents, each grounded on live data from LanceDB (vector), SQLite (structured), and a real-time risk store.
+SourceIQ is a **multi-agent supply chain intelligence system** built with Next.js 14 (App Router). It helps retail buyers assess sourcing exposure, compare supplier-country tradeoffs, and act on supply chain risk by routing requests through a LangGraph StateGraph to specialist AI agents, each grounded on live data from LanceDB (vector), SQLite (structured), and a real-time risk store.
 
 **Core design principles:**
 
@@ -91,7 +91,7 @@ SourceIQ is a **multi-agent supply chain intelligence system** built with Next.j
 
 **Location:** `app/components/` · `app/page.tsx`
 
-The UI is a single Next.js page (`app/page.tsx`) that assembles the dashboard from 11 React components. Components communicate with the backend exclusively through the API Layer.
+The UI is a single Next.js page (`app/page.tsx`) that renders `MainLayout`, which assembles the dashboard from 18 React components. Components communicate with the backend exclusively through the API Layer.
 
 ### Component Inventory
 
@@ -108,6 +108,13 @@ The UI is a single Next.js page (`app/page.tsx`) that assembles the dashboard fr
 | `ConvergenceCards.tsx` | Cards surfacing multi-domain risk overlaps (tariff + conflict + advisory on same country) | Rendered from heatmap/risk data |
 | `AIInsightsPanel.tsx` | Sidebar with AI-generated sourcing insights | Rendered from chat session data |
 | `LeftPane.tsx` | Left panel wrapper — tabs for Chat and Intelligence views | Wrapper only |
+| `MainLayout.tsx` | Top-level layout: fixed left chat pane + right tabbed sections (Risk Map, Supply Chain Health, Tariff Simulator, Intelligence). Uses deferred rendering (`everShown` set) so Leaflet gets a real container size on mount. Dispatches `sourceiq:analyze-country` custom events for cross-component chat prefill. | Wrapper — routes to child components |
+| `ThemeToggle.tsx` | Dark/light mode toggle button. Persists preference to `localStorage` under `sourceiq-theme` key; defaults to dark. | None (client-only) |
+| `DecisionBrief.tsx` | Post-query intelligence card that auto-parses `AgentResponse` into a structured brief: headline, metrics (savings, risk score, item count), current vs recommended country, confidence level. Handles inventory-lookup, risk-brief, and sourcing-comparison responses with distinct layouts. | Rendered from `/api/query` response data |
+| `DecisionQueue.tsx` | Agentic decision triage panel rendering urgency-ranked `AgentDecision` cards from the Morning Brief. User controls: Approve (auto-submits `prebuiltQuery` to chat + calls `/api/notify-procurement`), Defer (moves card to bottom), Dismiss (removes). Includes `TriageRunner` for batch execution. | `POST /api/notify-procurement` |
+| `RiskRadarStrip.tsx` | Global Risk Radar cockpit hero strip. Shows top-3 critical/high countries with live SRI score + numeric trend delta (computed from previous SSE snapshot). Displays critical count and safe-zone count. Cards are clickable → dispatches `sourceiq:analyze-country`. | `GET /api/risk-stream` (SSE) |
+| `SignalConvergenceStrip.tsx` | Live convergence pill strip showing multi-domain signal overlaps per country. Click any pill to expand full detail panel (signals, score, severity). Subscribes to SSE `convergence` events for real-time updates. | `GET /api/risk-stream` (SSE — `convergence` event) |
+| `TriageRunner.tsx` | Batch triage execution: runs top 3 pending decisions sequentially through the chat agent by dispatching `prebuiltQuery` events with 1800ms spacing. Shows progress indicators per decision and a static Sourcing Action Plan summary on completion. | Dispatches to `ChatInterface` via `sourceiq:analyze-country` events |
 
 ### Key UI patterns
 
@@ -129,6 +136,15 @@ const ConflictHeatmap = dynamic(() => import('./components/ConflictHeatmap'), { 
 
 **Auto-fetch on mount:**
 All dashboard widgets call their endpoint on `useEffect([])` — no user interaction needed for initial data.
+
+**Dark/light theme:**
+`layout.tsx` injects an inline `<script>` that reads `localStorage` before first paint to prevent FOUC (flash of unstyled content). `ThemeToggle` component persists preference. Default is dark mode.
+
+**Error boundary:**
+`app/error.tsx` provides a global error boundary with a "Try again" reset button. Catches unhandled React errors across all routes.
+
+**Cross-component communication:**
+Components dispatch and listen for `sourceiq:analyze-country` custom events on `window` to prefill the chat input from any widget (e.g., clicking a country on the heatmap, approving a decision).
 
 ---
 
@@ -152,6 +168,10 @@ Each route is a Next.js App Router handler (`export async function GET/POST()`).
 | `/api/forecasts` | GET | Calls `generateForecasts(riskStore)`; returns 7-day risk projections |
 | `/api/world-brief` | GET | Calls `orchestrator.route("Global situation brief...")` |
 | `/api/countries` | GET | Returns `getCountryConfig().getAll()` — country metadata list |
+| `/api/trace/[id]` | GET | Returns all `TraceRecord` spans for a given request ID (from the global trace store in `tracingClient.ts`). Used by the UI to show the full call tree for any query. |
+| `/api/notify-procurement` | POST | Sends a contextual HTML email to the procurement team when a Decision Queue item is approved. Reads recipient from `config/local.json`; reuses the nodemailer SMTP transport from morning-brief. Returns `{ sent, simulated }`. |
+| `/api/debug/lancedb` | GET | Raw LanceDB inventory inspection. Supports `?country=`, `?sku=`, `?search=` (vector) query params. Returns items with mode metadata. For development/validation only. |
+| `/api/debug/sqlite` | GET | Raw SQLite inspection. Supports `?table=tariffs`, `?table=country_config`, `?country=`, `?hscode=` filters. Returns table summaries or filtered rows. For development/validation only. |
 
 ### SSE Implementation (risk-stream)
 
@@ -256,7 +276,7 @@ Each agent receives all dependencies through its constructor (interfaces only, n
 
 ### InventoryAgent (`inventoryAgent.ts`)
 
-**Constructor:** `(store: IInventoryStore, foundry: IFoundryClient)`
+**Constructor:** `(store: IInventoryStore, foundry: IFoundryClient, tariffs?: ITariffStore, retriever?: InventoryRetriever)`
 
 **Query routing logic:**
 ```
@@ -284,9 +304,9 @@ Question: Which electronics do I source from China?
 
 ### TariffAgent (`tariffAgent.ts`)
 
-**Constructor:** `(store: ITariffStore, foundry: IFoundryClient)`
+**Constructor:** `(store: ITariffStore, foundry: IFoundryClient, inventory?: IInventoryStore, riskStore?: IRiskStore)`
 
-Fetches all tariff rates (`store.getAllRates()`), then filters to country mentioned in query before sending to LLM (avoids 80-row context overload). Falls back to first 20 rows if no country match. Sets timeout to 60s (phi-4-mini is slow on large contexts).
+Fetches all tariff rates (`store.getAllRates()`), then filters to country mentioned in query before sending to LLM (avoids 80-row context overload). Falls back to first 20 rows if no country match. Sets timeout to 60s (phi-4-mini is slow on large contexts). Also supports a structured SKU-switch path: when the query matches `analyze switching SKU-XXX from CountryA`, builds full `SourcingRecommendation[]` so the Decision Brief tiles populate correctly (requires optional `inventory` and `riskStore` dependencies).
 
 **Data grounded on:** HS code, rate %, effective date, trade agreement (USMCA, Jordan FTA, etc.), today's date (injected to ensure correct tense).
 
@@ -357,7 +377,7 @@ Tools always included for sourcing/cost queries: `get_oil_price`, `get_shipping_
 | `riskPoller.ts` | Runs a `setInterval` loop every `RISK_POLL_INTERVAL_MS` (default 5 min). Fetches GDELT batch + RSS per country + State Dept advisories. Runs `ConflictClassifier` on each article. Calls `RiskScorer` to compute SRI. Updates `InMemoryRiskStore`. Also invokes `ConvergenceDetector` and `WorldBankBaselines` refresh. |
 | `riskScorer.ts` | Pure function `calculateSri(input)`. Weights: `newsRisk×0.30 + tariffRisk×0.25 + tradeDisruption×0.20 + baselineRisk×0.25`. Applies floor rules from `ICountryConfigStore`. Returns `SourcingRiskIndex`. |
 | `conflictClassifier.ts` | Scores article severity (low/medium/high/critical) using keyword lists per severity tier. No LLM — preserves Foundry Local capacity for user queries. |
-| `convergenceDetector.ts` | Detects when 3+ signals types (tariff + conflict + travel advisory) overlap for the same country in a single poll cycle. Emits `ConvergenceCard` records. |
+| `convergenceDetector.ts` | Detects when 2+ signal dimensions (newsRisk, tariffRisk, tradeDisruption, baselineRisk) exceed their thresholds simultaneously for the same country. Computes a convergence intensity score with bonuses for escalating trend, critical tier, and additional dimensions. Emits `ConvergenceCard` records. |
 | `forecastGenerator.ts` | Projects 7-day SRI trend per country using linear extrapolation of `trendHistory`. Returns probability-ranked forecast cards. |
 | `circuitBreaker.ts` | Generic `CircuitBreaker<T>` class. Trips open after N consecutive failures. Resets to closed after successful call in half-open state. Used by GDELT, RSS, State Dept fetchers. |
 | `riskCache.ts` | TTL-based in-memory cache (Map + expiry timestamps). Used by World Bank API fetcher to avoid rate limiting. |
@@ -378,7 +398,6 @@ Tools always included for sourcing/cost queries: `get_oil_price`, `get_shipping_
 | `diversificationScore.ts` | `calculateDiversification(inventory, tariff, risk)` — Herfindahl-like spend concentration index per country; SRI-weighted risk score; returns `DiversificationHealth` with color-coded gauge value. |
 | `costCalculator.ts` | `effectiveCost(unitCostUSD, tariffRate)` — single formula: `unitCost × (1 + tariffRate / 100)`. |
 | `tariffLookup.ts` | Tool definitions (name, description, parameters) used by `tariffMcpServer.ts`. |
-
 ---
 
 ## 8. Layer 5 — Storage Adapters
@@ -447,9 +466,12 @@ Implements `IFoundryClient`. Used when `AZURE_FOUNDRY_ENDPOINT` + `AZURE_FOUNDRY
 
 ### Foundry Local (phi-4-mini)
 
-- **Endpoint:** `http://localhost:5273` (configurable via `FOUNDRY_LOCAL_ENDPOINT`)
+- **SDK:** `foundry-local-sdk` — auto-discovers port via `startWebService()`; type declarations in `src/types/foundry-local-sdk.d.ts`
+- **Endpoint:** Auto-discovered by SDK (fallback: `http://localhost:5273`, configurable via `FOUNDRY_LOCAL_ENDPOINT`)
 - **API:** OpenAI-compatible `/v1/chat/completions`
 - **Model:** `phi-4-mini` — Microsoft's 3.8B parameter model, optimized for reasoning
+- **Model TTL:** Set to 7200s (2h) at startup via `/openai/load/{model}?ttl=7200` — prevents auto-unload during demo idle time
+- **SDK bypass:** Set `FOUNDRY_USE_SDK=false` to skip the SDK and use raw HTTP (instant rollback)
 - **Timeout:** 60 seconds (AbortSignal) per call
 - **Concurrency:** Sequential — all agents run sequentially, never concurrent LLM calls (prevents OOM on 16GB machines)
 - **Graceful degradation:** On `ECONNREFUSED`, returns structured data summary without LLM narrative
@@ -470,7 +492,27 @@ const tracedClient = withTracing(foundry, 'tariff-agent');
 // Every chat() call logs: [tariff-agent] traceId=abc123 start=... end=... duration=450ms
 ```
 
-Provides: UUID per call, agent name tag, start/end timestamps, duration. Visible in server logs during demo.
+Provides: UUID per call (span-level `traceId`), request-level `requestId` (groups all spans for one user query), agent name tag, start/end timestamps, duration. Spans are stored in a global trace store (capped at 500 records, survives Next.js dev-mode hot reload via `globalThis`). The `/api/trace/[id]` route exposes spans by `requestId`.
+
+Additional utilities:
+- `recordSpan(agent, method, durationMs)` — records non-LLM steps (graph nodes, keyword routing)
+- `setActiveRequestId(id)` / `getActiveRequestId()` — scopes spans to the current request
+- `getTracesByRequestId(id)` — returns all spans for a given request (used by the trace API route)
+
+### Risk Event Bus (`riskEvents.ts`)
+
+A shared `EventEmitter` singleton (`riskEmitter`) used for real-time risk updates. `InMemoryRiskStore.updateSri()` emits here; the SSE route (`/api/risk-stream`) subscribes per-connection. Max listeners set to 50 for concurrent SSE clients.
+
+### Cache Service (`cache.ts`)
+
+A full-featured typed cache service with:
+- Per-entry TTL with metadata (createdAt, expiresAt, tags, source)
+- LRU eviction (max 256 entries — no unbounded growth)
+- In-flight request coalescing (one recompute per key, not N stampedes)
+- Stale-while-revalidate (serve stale immediately, recompute in background)
+- Tag-based bulk invalidation (tags: `risk`, `inventory`, `tariff`, `market`, `brief`, `ai-insight`)
+- Stats tracking (hits, misses, stale-hits, evictions)
+- Survives Next.js dev-mode hot reload via `globalThis`
 
 ---
 
@@ -499,6 +541,52 @@ Provides: UUID per call, agent name tag, start/end timestamps, duration. Visible
 | `sanctionsMcpServer.ts` | `check_sanctions`, `list_sanctioned_countries`, `get_compliance_guidance` | `country_config` table |
 | `fxMcpServer.ts` | `get_fx_rates`, `get_country_currency`, `convert_currency` | ECB via frankfurter.app |
 | `gdeltMcpServer.ts` | `search_gdelt_news`, `get_conflict_articles`, `get_country_events` | GDELT API |
+
+### Internal MCP Clients — Three-Layer MCP Architecture
+
+**Location:** `src/lib/internalMcpClients.ts`
+
+At runtime, agents do **not** call raw storage adapters. Instead, `startup.ts` wires three internal MCP servers (tariff, inventory, risk) to in-process `Client` instances via `InMemoryTransport` from `@modelcontextprotocol/sdk`. It exposes `McpTariffAdapter`, `McpInventoryAdapter`, and `McpRiskAdapter` classes that implement the same `ITariffStore`, `IInventoryStore`, and `IRiskStore` interfaces — but route every call through `Client.callTool()` over the MCP protocol boundary.
+
+**Call flow:**
+```
+Agent → McpXxxAdapter.method() → Client.callTool() → InMemoryTransport
+  → MCP server handler → raw store (SqliteTariffStore / LanceDbInventoryStore / InMemoryRiskStore)
+```
+
+This guarantees that ALL agent-tool interactions traverse the MCP protocol at runtime, satisfying the three-layer MCP architecture (external stdio MCP servers + internal InMemoryTransport MCP clients + MCP runtime bridge for financial APIs).
+
+---
+
+## 10b. Prompt Registry
+
+**Location:** `src/prompts/promptLoader.ts` · `src/prompts/prompts.json`
+
+All agent system prompts are centralized in `prompts.json` (Prompty-inspired format) — no prompt strings scattered across agent files.
+
+**Format:** Dot-notation keys (e.g., `geoRisk.analyst`) mapped to `PromptEntry` records containing:
+- `name`, `description` — human-readable labels
+- `model.parameters.max_tokens` — token budget co-located with the prompt
+- `system` — the system prompt text with `{{variableName}}` placeholders for runtime substitution
+
+**API:**
+- `getPrompt(key, vars?)` — returns the system prompt with placeholders filled
+- `getMaxTokens(key)` — returns the max_tokens value for the prompt
+
+**Registered prompts:** `inventory.analyst`, `inventory.browse`, `tariff.analyst`, `geoRisk.analyst`, `marketIntel.analyst`, `newsAggregator.analyst`, `orchestrator.general`, `classifier.intentClassifier`.
+
+---
+
+## 10c. Manufacturing Cost Index
+
+**Location:** `src/lib/costIndex.ts`
+
+A shared country × category cost index used by the Morning Brief and What-If simulator to estimate manufacturing cost differences when switching suppliers between countries.
+
+- `getCostIndex(country, category)` — returns the relative cost multiplier (China Electronics = 1.0 baseline)
+- `estimateAltUnitCost(currentUnitCost, currentCountry, altCountry, category)` — computes what a product would cost if manufactured in `altCountry` instead of `currentCountry`
+
+Covers 16 countries across 5 categories (Electronics, Apparel, Home, Toys, Food). Defaults to 1.20 for unknown country/category pairs.
 
 ---
 
@@ -578,12 +666,19 @@ initializeApp() — runs once per server process (guarded by 'initialized' flag)
   │   ├─ if AZURE_FOUNDRY_ENDPOINT set → FoundryCloudClient (reasoning=cloud, embeddings=local)
   │   └─ else → FoundryLocalClient (all on-device)
   │
-  ├─ Construct 6 agents (each gets interfaces, never concrete classes)
-  │   InventoryAgent(inventoryStore, withTracing(localFoundry, 'inventory-agent'))
-  │   TariffAgent(tariffStore, withTracing(foundry, 'tariff-agent'))
-  │   GeoRiskAgent(riskStore, withTracing(foundry, 'georisk-agent'))
-  │   DashboardAgent(tariffStore, inventoryStore, riskStore)
-  │   NewsAggregatorAgent(riskStore, withTracing(foundry, 'news-agent'))
+  ├─ initFoundrySDK() — starts Foundry Local web service via foundry-local-sdk
+  │   └─ Sets model TTL to 7200s (2h) so phi-4-mini stays loaded during demo idle time
+  │
+  ├─ initInternalMcpClients(rawTariffStore, rawInventoryStore, rawRiskStore)
+  │   └─ Wires 3 MCP servers to InMemoryTransport clients
+  │   └─ mcpTariff = McpTariffAdapter(), mcpInventory = McpInventoryAdapter(), mcpRisk = McpRiskAdapter(rawRiskStore)
+  │
+  ├─ Construct 6 agents (each gets MCP adapters via interfaces, never concrete classes)
+  │   InventoryAgent(mcpInventory, withTracing(localFoundry, 'inventory-agent'), mcpTariff, InventoryRetriever(mcpInventory))
+  │   TariffAgent(mcpTariff, withTracing(foundry, 'tariff-agent'), mcpInventory, mcpRisk)
+  │   GeoRiskAgent(mcpRisk, withTracing(foundry, 'georisk-agent'))
+  │   DashboardAgent(mcpTariff, mcpInventory, mcpRisk)
+  │   NewsAggregatorAgent(mcpRisk, withTracing(foundry, 'news-agent'))
   │   MarketIntelAgent(withTracing(foundry, 'market-intel-agent'))
   │
   ├─ orchestrator = new Orchestrator(all 6 agents, tracedFoundry)
@@ -969,7 +1064,7 @@ interface ConflictSignal {
 
 // An active risk alert (surfaced in UI)
 interface RiskAlert {
-  severity: 'high' | 'critical';
+  severity: 'low' | 'medium' | 'high' | 'critical';
   country: string;
   message: string;
   source: string;
@@ -978,11 +1073,14 @@ interface RiskAlert {
 
 // Multi-domain convergence event
 interface ConvergenceCard {
-  countries: string[];
-  domains: string[];          // e.g. ["tariff", "conflict", "advisory"]
-  summary: string;
-  severity: number;           // 0–100
-  timestamp: string;
+  country: string;
+  countryCode: string;             // ISO 3166-1 alpha-2
+  score: number;                   // convergence intensity 0–100
+  severity: 'medium' | 'high' | 'critical';
+  title: string;                   // e.g. "China: Multi-domain threat convergence"
+  signals: string[];               // e.g. ['news:67', 'tariff:50', 'disruption:75']
+  impactEstimateUSD?: number;      // estimated annual portfolio impact
+  detectedAt: string;
 }
 
 // Sourcing recommendation (output of DashboardAgent / WhatIfSimulator)
@@ -990,12 +1088,14 @@ interface SourcingRecommendation {
   sku: string;
   currentCountry: string;
   recommendedCountry: string;
+  tippingPointRate?: number;      // tariff rate at which switching becomes cheaper (0-100)
   currentCostUSD: number;
   recommendedCostUSD: number;
   annualSavingsUSD: number;
   tariffRate: number;
   riskScore: number;
   riskAlerts: RiskAlert[];
+  diversificationScore?: number;
 }
 
 // Standard agent response (all agents return this)
@@ -1068,6 +1168,82 @@ interface MorningBrief {
 }
 ```
 
+### Additional Domain Types
+
+```typescript
+// Supplier profile (from suppliers.json, seeded into SQLite)
+interface SupplierInfo {
+  country: string;
+  category: string;
+  leadTimeDays: number;
+  reliabilityScore: number;        // 0-100
+  carbonScore: number;             // 0-100, lower = more carbon-intensive
+  minimumOrderQuantity: number;
+}
+
+// What-If tariff scenario result
+interface WhatIfScenario {
+  hypotheticalTariffRate: number;
+  country: string;
+  affectedSkus: string[];
+  totalPortfolioImpactUSD: number;
+  recommendations: SourcingRecommendation[];
+  aiNarrative?: string;            // LLM-generated sourcing recommendation
+  fxRates?: Record<string, number>; // live USD exchange rates at time of calculation
+  currencyCode?: string;           // ISO 4217 code for the selected country
+}
+
+// Supply chain concentration health gauge
+interface DiversificationHealth {
+  overallScore: number;            // 0-100, higher = safer = more diversified
+  concentrationWarnings: {
+    country: string;
+    percentage: number;            // % of total annual spend from this country
+    severity: 'low' | 'medium' | 'high' | 'critical';
+  }[];
+  countryBreakdown: {
+    country: string;
+    percentage: number;
+    annualSpendUSD: number;
+  }[];
+  recommendedActions: string[];
+  aiInsight?: string;              // LLM-generated executive summary of supply chain health
+}
+
+// World Brief — AI-generated global sourcing intelligence summary
+interface WorldBrief {
+  summary: string;
+  topRiskCountries: string[];
+  headlines?: { headline: string; source: string; url?: string }[];
+  updatedAt: string;
+}
+
+// Risk forecast (7-day SRI projection)
+interface Forecast {
+  id: string;
+  category: 'conflict' | 'tariff' | 'supply-chain' | 'political' | 'port' | 'cyber';
+  country: string;
+  region: string;
+  title: string;
+  probability: number;             // 0-1
+  projections: { h24: number; d7: number; d30: number };
+  trend: 'escalating' | 'stable' | 'de-escalating';
+  updatedAt: string;
+}
+
+// Infrastructure observability types
+interface TraceRecord {
+  traceId: string;                 // span-level UUID
+  requestId: string;               // groups all spans for one user query
+  agent: string;
+  method: string;
+  durationMs: number;
+  timestamp: string;
+  status: 'ok' | 'error';
+  errorMessage?: string;
+}
+```
+
 ### SQLite Schema (key tables)
 
 ```sql
@@ -1116,16 +1292,20 @@ CREATE TABLE country_config (
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
-| `FOUNDRY_LOCAL_ENDPOINT` | Yes | `http://localhost:5273` | Foundry Local API base URL |
-| `FOUNDRY_LOCAL_MODEL` | Yes | `phi-4-mini` | Model name for Foundry Local |
-| `LANCEDB_PATH` | Yes | `./data/lancedb` | Path to LanceDB vector store |
-| `SQLITE_PATH` | Yes | `./data/sourceiq.db` | Path to SQLite database |
-| `GDELT_ENDPOINT` | No | `https://api.gdeltproject.org/api/v2/doc/doc` | GDELT API URL |
-| `RISK_POLL_INTERVAL_MS` | No | `300000` (5min) | RiskPoller interval |
-| `NEXT_PUBLIC_APP_URL` | No | `http://localhost:3000` | App URL (for SSE absolute URLs) |
+| `FOUNDRY_LOCAL_ENDPOINT` | No | `http://localhost:5273` | Foundry Local API base URL (auto-discovered when using SDK) |
+| `FOUNDRY_LOCAL_MODEL` | Yes | — | Model name for Foundry Local (e.g. `phi-4-mini`) |
+| `FOUNDRY_LOCAL_APP_NAME` | No | `sourceiq` | App name passed to foundry-local-sdk for logs/telemetry |
+| `FOUNDRY_USE_SDK` | No | `true` | Set to `false` to bypass foundry-local-sdk and use raw HTTP |
+| `LANCEDB_PATH` | Yes | — | Path to LanceDB vector store |
+| `SQLITE_PATH` | Yes | — | Path to SQLite database |
+| `GDELT_ENDPOINT` | Yes | — | GDELT API URL |
+| `RISK_POLL_INTERVAL_MS` | No | `900000` (15min) | RiskPoller interval |
+| `NEXT_PUBLIC_APP_URL` | Yes | — | App URL (for SSE absolute URLs) |
 | `AZURE_FOUNDRY_ENDPOINT` | No | — | Enables Azure AI Foundry cloud fallback |
 | `AZURE_FOUNDRY_API_KEY` | No | — | API key for Azure AI Foundry |
-| `STATE_DEPT_ADVISORY_URL` | No | — | US State Dept travel advisory RSS URL |
+| `AZURE_FOUNDRY_MODEL` | No | `gpt-4o` | Model deployment name for Azure AI Foundry |
+| `BING_SEARCH_API_KEY` | No | — | Bing Search API key (optional news source) |
+| `STATE_DEPT_ADVISORY_URL` | No | `""` | US State Dept travel advisory RSS URL |
 | `ALERT_EMAIL_TO` | No | — | Recipient address for morning brief HTML email |
 | `SMTP_HOST` | No | — | SMTP server hostname (e.g. `smtp.sendgrid.net`) |
 | `SMTP_PORT` | No | `587` | SMTP port (465 for SSL, 587 for STARTTLS) |
@@ -1141,6 +1321,9 @@ CREATE TABLE country_config (
 | `vercel.json` | Cron: `{ "path": "/api/morning-brief", "schedule": "0 7 * * *" }` — 7am daily UTC |
 | `tsconfig.scripts.json` | Separate tsconfig for seed scripts (CommonJS module resolution) |
 | `tailwind.config.ts` | Tailwind with `content: ['./app/**/*.tsx', './src/**/*.tsx']` |
+| `config/local.json` | Local deployment config: procurement team email, CC list, team name, app name, base URL. Used by `/api/notify-procurement` for email dispatch. |
+| `start.ps1` | PowerShell startup script: runs `foundry service start` then `foundry model run phi-4-mini-instruct-openvino-gpu:2` to pre-load the model before `npm run dev`. |
+| `scripts/warm-demo.ts` | Pre-warm script: hits all dashboard endpoints + common what-if scenarios to populate server-side cache before a live demo. Exits non-zero if any critical endpoint fails. |
 
 ---
 

@@ -1,5 +1,5 @@
 /**
- * tests/evals.test.ts — SourceIQ Query-Level Evaluations
+ * tests/evals.test.ts — SourcingIntel Query-Level Evaluations
  *
  * Tests are grouped into 5 categories:
  *   1. Orchestrator routing accuracy  — keyword patterns route to correct agent

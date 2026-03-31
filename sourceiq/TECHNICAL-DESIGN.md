@@ -1,4 +1,4 @@
-# SourceIQ — Technical Design Document
+# SourcingIntel — Technical Design Document
 
 > **Audience:** Engineers reviewing the codebase, judges, contributors.
 > **Scope:** Complete architecture, all modules, layer responsibilities, and end-to-end request flows.
@@ -9,7 +9,7 @@
 
 Global tariff policy shifts and geopolitical disruptions now move at news-cycle speed. A retailer sourcing consumer electronics from China has to evaluate — within 48 hours of a tariff announcement — which of their 30+ SKUs are exposed, what switching to Vietnam or Mexico would cost, and whether those alternatives are themselves stable. Today, that analysis lives in spreadsheets, disconnected tariff tables, and gut instinct.
 
-SourceIQ replaces that process with a decision-support system backed by a live multi-agent intelligence platform. A buyer can assess China sourcing exposure, compare landed-cost tradeoffs across countries, and identify the most actionable sourcing switches from one workflow that brings together affected SKUs, current vs alternative landed costs, real-time geopolitical risk scores, and ranked recommendations — all grounded in live data and computed on-device, with no pricing or inventory data leaving the machine.
+SourcingIntel replaces that process with a decision-support system backed by a live multi-agent intelligence platform. A buyer can assess China sourcing exposure, compare landed-cost tradeoffs across countries, and identify the most actionable sourcing switches from one workflow that brings together affected SKUs, current vs alternative landed costs, real-time geopolitical risk scores, and ranked recommendations — all grounded in live data and computed on-device, with no pricing or inventory data leaving the machine.
 
 **What makes this technically distinct:**
 - A LangGraph StateGraph orchestrates 7 specialist agents with keyword-first classification (saves 300–2000ms per query by avoiding LLM calls for clear-cut intents)
@@ -43,7 +43,7 @@ SourceIQ replaces that process with a decision-support system backed by a live m
 
 ## 1. System Overview
 
-SourceIQ is a **multi-agent supply chain intelligence system** built with Next.js 14 (App Router). It helps retail buyers assess sourcing exposure, compare supplier-country tradeoffs, and act on supply chain risk by routing requests through a LangGraph StateGraph to specialist AI agents, each grounded on live data from LanceDB (vector), SQLite (structured), and a real-time risk store.
+SourcingIntel is a **multi-agent supply chain intelligence system** built with Next.js 14 (App Router). It helps retail buyers assess sourcing exposure, compare supplier-country tradeoffs, and act on supply chain risk by routing requests through a LangGraph StateGraph to specialist AI agents, each grounded on live data from LanceDB (vector), SQLite (structured), and a real-time risk store.
 
 **Core design principles:**
 
@@ -108,13 +108,13 @@ The UI is a single Next.js page (`app/page.tsx`) that renders `MainLayout`, whic
 | `ConvergenceCards.tsx` | Cards surfacing multi-domain risk overlaps (tariff + conflict + advisory on same country) | Rendered from heatmap/risk data |
 | `AIInsightsPanel.tsx` | Sidebar with AI-generated sourcing insights | Rendered from chat session data |
 | `LeftPane.tsx` | Left panel wrapper — tabs for Chat and Intelligence views | Wrapper only |
-| `MainLayout.tsx` | Top-level layout: fixed left chat pane + right tabbed sections (Risk Map, Supply Chain Health, Tariff Simulator, Intelligence). Uses deferred rendering (`everShown` set) so Leaflet gets a real container size on mount. Dispatches `sourceiq:analyze-country` custom events for cross-component chat prefill. | Wrapper — routes to child components |
-| `ThemeToggle.tsx` | Dark/light mode toggle button. Persists preference to `localStorage` under `sourceiq-theme` key; defaults to dark. | None (client-only) |
+| `MainLayout.tsx` | Top-level layout: fixed left chat pane + right tabbed sections (Risk Map, Supply Chain Health, Tariff Simulator, Intelligence). Uses deferred rendering (`everShown` set) so Leaflet gets a real container size on mount. Dispatches `SourcingIntel:analyze-country` custom events for cross-component chat prefill. | Wrapper — routes to child components |
+| `ThemeToggle.tsx` | Dark/light mode toggle button. Persists preference to `localStorage` under `SourcingIntel-theme` key; defaults to dark. | None (client-only) |
 | `DecisionBrief.tsx` | Post-query intelligence card that auto-parses `AgentResponse` into a structured brief: headline, metrics (savings, risk score, item count), current vs recommended country, confidence level. Handles inventory-lookup, risk-brief, and sourcing-comparison responses with distinct layouts. | Rendered from `/api/query` response data |
 | `DecisionQueue.tsx` | Agentic decision triage panel rendering urgency-ranked `AgentDecision` cards from the Morning Brief. User controls: Approve (auto-submits `prebuiltQuery` to chat + calls `/api/notify-procurement`), Defer (moves card to bottom), Dismiss (removes). Includes `TriageRunner` for batch execution. | `POST /api/notify-procurement` |
-| `RiskRadarStrip.tsx` | Global Risk Radar cockpit hero strip. Shows top-3 critical/high countries with live SRI score + numeric trend delta (computed from previous SSE snapshot). Displays critical count and safe-zone count. Cards are clickable → dispatches `sourceiq:analyze-country`. | `GET /api/risk-stream` (SSE) |
+| `RiskRadarStrip.tsx` | Global Risk Radar cockpit hero strip. Shows top-3 critical/high countries with live SRI score + numeric trend delta (computed from previous SSE snapshot). Displays critical count and safe-zone count. Cards are clickable → dispatches `SourcingIntel:analyze-country`. | `GET /api/risk-stream` (SSE) |
 | `SignalConvergenceStrip.tsx` | Live convergence pill strip showing multi-domain signal overlaps per country. Click any pill to expand full detail panel (signals, score, severity). Subscribes to SSE `convergence` events for real-time updates. | `GET /api/risk-stream` (SSE — `convergence` event) |
-| `TriageRunner.tsx` | Batch triage execution: runs top 3 pending decisions sequentially through the chat agent by dispatching `prebuiltQuery` events with 1800ms spacing. Shows progress indicators per decision and a static Sourcing Action Plan summary on completion. | Dispatches to `ChatInterface` via `sourceiq:analyze-country` events |
+| `TriageRunner.tsx` | Batch triage execution: runs top 3 pending decisions sequentially through the chat agent by dispatching `prebuiltQuery` events with 1800ms spacing. Shows progress indicators per decision and a static Sourcing Action Plan summary on completion. | Dispatches to `ChatInterface` via `SourcingIntel:analyze-country` events |
 
 ### Key UI patterns
 
@@ -144,7 +144,7 @@ All dashboard widgets call their endpoint on `useEffect([])` — no user interac
 `app/error.tsx` provides a global error boundary with a "Try again" reset button. Catches unhandled React errors across all routes.
 
 **Cross-component communication:**
-Components dispatch and listen for `sourceiq:analyze-country` custom events on `window` to prefill the chat input from any widget (e.g., clicking a country on the heatmap, approving a decision).
+Components dispatch and listen for `SourcingIntel:analyze-country` custom events on `window` to prefill the chat input from any widget (e.g., clicking a country on the heatmap, approving a decision).
 
 ---
 
@@ -653,7 +653,7 @@ export let orchestrator: Orchestrator;  // LangGraph orchestrator
 initializeApp() — runs once per server process (guarded by 'initialized' flag)
   │
   ├─ createSqliteDb(SQLITE_PATH)
-  │   └─ opens sourceiq.db; runs schema.sql if tables don't exist
+  │   └─ opens SourcingIntel.db; runs schema.sql if tables don't exist
   │
   ├─ initCountryConfig(new SqliteCountryConfigStore(db))
   │   └─ eagerly loads all country_config rows into memory
@@ -1294,7 +1294,7 @@ CREATE TABLE country_config (
 |----------|----------|---------|---------|
 | `FOUNDRY_LOCAL_ENDPOINT` | No | `http://localhost:5273` | Foundry Local API base URL (auto-discovered when using SDK) |
 | `FOUNDRY_LOCAL_MODEL` | Yes | — | Model name for Foundry Local (e.g. `phi-4-mini`) |
-| `FOUNDRY_LOCAL_APP_NAME` | No | `sourceiq` | App name passed to foundry-local-sdk for logs/telemetry |
+| `FOUNDRY_LOCAL_APP_NAME` | No | `SourcingIntel` | App name passed to foundry-local-sdk for logs/telemetry |
 | `FOUNDRY_USE_SDK` | No | `true` | Set to `false` to bypass foundry-local-sdk and use raw HTTP |
 | `LANCEDB_PATH` | Yes | — | Path to LanceDB vector store |
 | `SQLITE_PATH` | Yes | — | Path to SQLite database |
@@ -1352,14 +1352,14 @@ This means **all 69 tests run without a live SQLite database or Foundry Local in
 ### Test Philosophy
 
 - **No LLM mocking for agent logic**: agents are tested by verifying the grounding data passed to the LLM (`foundry.lastMessage()`), not the LLM's output
-- **Real SQLite for tariff tests**: `evals.test.ts` tariff group hits the actual `data/sourceiq.db` file
+- **Real SQLite for tariff tests**: `evals.test.ts` tariff group hits the actual `data/SourcingIntel.db` file
 - **Precision@K for RAG**: `rag.test.ts` verifies the retriever's contract without needing LanceDB or embeddings
 
 ---
 
 ## 17. Responsible AI Design
 
-SourceIQ applies Responsible AI principles at the infrastructure level, not as an afterthought:
+SourcingIntel applies Responsible AI principles at the infrastructure level, not as an afterthought:
 
 ### Privacy — On-Device by Default
 

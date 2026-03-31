@@ -1,4 +1,4 @@
-// SourceIQ — All TypeScript interfaces (single source of truth)
+// SourcingIntel — All TypeScript interfaces (single source of truth)
 // DO NOT declare interfaces anywhere else — always import from here.
 
 // ── Inventory & Suppliers ─────────────────────────────────────────────

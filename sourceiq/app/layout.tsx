@@ -14,7 +14,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "SourceIQ — AI-Powered Retail Sourcing Intelligence",
+  title: "SourcingIntel — AI-Powered Retail Sourcing Intelligence",
   description: "Real-time geopolitical risk scoring, tariff optimization, and supply chain intelligence for retail buyers.",
 };
 

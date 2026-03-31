@@ -35,7 +35,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# SourceIQ — local secrets and machine-specific files
+# SourcingIntel — local secrets and machine-specific files
 .env.local
 config/local.json
 package-lock.json

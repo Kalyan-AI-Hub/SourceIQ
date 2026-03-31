@@ -111,7 +111,7 @@ export default function MainLayout() {
               <line x1="4.8" y1="8.8" x2="10" y2="11.2" stroke="currentColor" strokeWidth="1.2"/>
               <line x1="14" y1="12.8" x2="19.2" y2="15.2" stroke="currentColor" strokeWidth="1.2"/>
             </svg>
-            <span className="text-[17px] font-bold text-white tracking-tight leading-none">SourceIQ</span>
+            <span className="text-[17px] font-bold text-white tracking-tight leading-none">SourcingIntel</span>
           </div>
           <span className="text-[10px] text-slate-500 font-medium tracking-wide hidden sm:block">
             AI-Powered Retail Sourcing Intelligence

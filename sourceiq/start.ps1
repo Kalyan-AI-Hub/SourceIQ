@@ -1,4 +1,4 @@
-# SourceIQ startup script
+# SourcingIntel startup script
 # Run this once before `npm run dev` each session.
 
 Write-Host "Starting Foundry Local service..." -ForegroundColor Cyan

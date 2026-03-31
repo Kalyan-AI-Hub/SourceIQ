@@ -83,12 +83,12 @@ function buildModel(payload: DecisionBriefPayload | null): BriefModel | null {
   const summary = response.recommendations?.length
     ? `${response.recommendations.length} recommendation${response.recommendations.length > 1 ? 's' : ''} grounded on tariff, inventory, and geopolitical signals.`
     : isInventoryLookup
-      ? `${inventoryFallback.itemCount} catalog match${inventoryFallback.itemCount === 1 ? '' : 'es'} returned from SourceIQ inventory records${response.answer.includes('AI summarization offline') ? ' using fallback catalog formatting.' : '.'}`
+      ? `${inventoryFallback.itemCount} catalog match${inventoryFallback.itemCount === 1 ? '' : 'es'} returned from SourcingIntel inventory records${response.answer.includes('AI summarization offline') ? ' using fallback catalog formatting.' : '.'}`
     : isRiskBrief
       ? `${response.riskAlerts?.length ?? 0} active alert${(response.riskAlerts?.length ?? 0) === 1 ? '' : 's'} shaped this brief.`
     : response.riskAlerts?.length
       ? `${response.riskAlerts.length} active alert${response.riskAlerts.length > 1 ? 's' : ''} shaped this brief.`
-      : `Response generated from live SourceIQ intelligence for: ${query}`;
+      : `Response generated from live SourcingIntel intelligence for: ${query}`;
 
   const confidence: 'High' | 'Medium' | 'Low' = response.recommendations?.length
     ? 'High'

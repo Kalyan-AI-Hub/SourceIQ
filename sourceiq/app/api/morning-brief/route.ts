@@ -375,7 +375,7 @@ async function sendBriefEmail(brief: MorningBrief): Promise<void> {
 <!DOCTYPE html>
 <html>
 <body style="font-family:sans-serif;background:#0f172a;color:#e2e8f0;padding:24px;margin:0">
-  <h1 style="color:#38bdf8;font-size:20px;margin:0 0 4px">SourceIQ Morning Brief</h1>
+  <h1 style="color:#38bdf8;font-size:20px;margin:0 0 4px">SourcingIntel Morning Brief</h1>
   <p style="color:#64748b;font-size:12px;margin:0 0 20px">Generated ${new Date(brief.generatedAt).toLocaleString()} · ${brief.totalAffectedSkus} SKUs affected · $${brief.totalPotentialSavingsUSD.toLocaleString()} potential savings</p>
   ${brief.aiSummary ? `
   <div style="background:#1e293b;border:1px solid #334155;border-radius:8px;padding:16px;margin-bottom:20px">
@@ -400,14 +400,14 @@ async function sendBriefEmail(brief: MorningBrief): Promise<void> {
     </tr></thead>
     <tbody>${savingsLines}</tbody>
   </table>` : ''}
-  <p style="color:#475569;font-size:11px;margin-top:24px">Sent by SourceIQ · Foundry Local phi-4-mini · All inference on-device</p>
+  <p style="color:#475569;font-size:11px;margin-top:24px">Sent by SourcingIntel · Foundry Local phi-4-mini · All inference on-device</p>
 </body>
 </html>`;
 
   await transporter.sendMail({
-    from: `"SourceIQ" <${SMTP_USER}>`,
+    from: `"SourcingIntel" <${SMTP_USER}>`,
     to: ALERT_EMAIL_TO!,
-    subject: `SourceIQ Morning Brief · ${brief.criticalAlerts.length} alerts · $${brief.totalPotentialSavingsUSD.toLocaleString()} savings`,
+    subject: `SourcingIntel Morning Brief · ${brief.criticalAlerts.length} alerts · $${brief.totalPotentialSavingsUSD.toLocaleString()} savings`,
     html,
   });
 

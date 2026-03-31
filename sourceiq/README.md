@@ -1,4 +1,4 @@
-# SourceIQ — AI-Powered Supply Chain Intelligence
+# SourcingIntel — AI-Powered Supply Chain Intelligence
 
 > All inference runs **on-device** via [Foundry Local](https://aka.ms/foundry-local) (phi-4-mini). No pricing or inventory data leaves the machine.
 
@@ -8,7 +8,7 @@
 
 ## What It Does
 
-SourceIQ is a real-time, multi-agent supply chain intelligence platform for retail buyers to assess sourcing exposure, compare supplier-country tradeoffs, and act on supply chain risk. It combines on-device AI inference, live geopolitical data, tariff databases, and a Model Context Protocol (MCP) tool layer into a single decision-support dashboard.
+SourcingIntel is a real-time, multi-agent supply chain intelligence platform for retail buyers to assess sourcing exposure, compare supplier-country tradeoffs, and act on supply chain risk. It combines on-device AI inference, live geopolitical data, tariff databases, and a Model Context Protocol (MCP) tool layer into a single decision-support dashboard.
 
 **Key capabilities:**
 
@@ -165,7 +165,7 @@ The LangGraph StateGraph orchestrates 6 specialist agents with **keyword-first i
 
 ## MCP Integration (Three-Layer Architecture)
 
-SourceIQ implements MCP at three levels, ensuring all agent-tool interactions traverse the MCP protocol:
+SourcingIntel implements MCP at three levels, ensuring all agent-tool interactions traverse the MCP protocol:
 
 | Layer | Implementation | Purpose |
 |---|---|---|
@@ -266,7 +266,7 @@ foundry model run phi-4-mini-instruct-openvino-gpu:2
 ### 2. Install dependencies
 
 ```bash
-cd sourceiq
+cd SourcingIntel
 pnpm install
 ```
 
@@ -303,24 +303,6 @@ NODE_OPTIONS="--max-old-space-size=4096" pnpm dev
 # Open http://localhost:3000
 ```
 
----
-
-## Demo Script
-
-Run these queries in order for a complete walkthrough:
-
-| # | Query / Action | What Happens |
-|---|---|---|
-| 1 | *"Which electronics do I source from China?"* | InventoryAgent → LanceDB getByCountry |
-| 2 | *"What is the tariff rate for China electronics HS 8471.30?"* | TariffAgent → SQLite lookup |
-| 3 | *"Compare sourcing China vs Vietnam for electronics"* | Full LangGraph pipeline: all 6 agents → merged response with chart |
-| 4 | *"What is the geopolitical risk for Vietnam right now?"* | GeoRiskAgent → SRI score + signal breakdown |
-| 5 | *"What is the current WTI oil price and shipping index?"* | MarketIntelAgent → MCP tools (Stooq + BDI) |
-| 6 | *"Summarize today's conflict news"* | NewsAggregatorAgent → GDELT + RSS |
-| 7 | Open What-If Simulator → drag to 40% China | `/api/what-if` → $M portfolio impact |
-| 8 | Open Morning Brief (bell icon) | Autonomous agent → Decision Queue with Approve/Defer/Dismiss |
-
----
 
 ## Evaluations
 
